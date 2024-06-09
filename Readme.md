@@ -2,19 +2,20 @@
 
 ## Project chosen
 
-Name: <TODO>
+Name: Django
 
-URL: <TODO>
+URL: https://github.com/django/django
 
-Number of lines of code and the tool used to count it: <TODO>
+Number of lines of code and the tool used to count it: we used lizard to count the number of lines and the number of lines = 383659  
 
-Programming language: <TODO>
+Programming language: python
 
 ## Coverage measurement
 
 ### Existing tool
 
 <Inform the name of the existing tool that was executed and how it was executed>
+We used coverage.py to check the coverage of the repository and it turned out to be 78%.
 
 <Show the coverage results provided by the existing tool with a screenshot>
 
