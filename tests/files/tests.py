@@ -142,7 +142,8 @@ class FileTests(unittest.TestCase):
     def test_file_iteration_with_text(self):
         f = File(StringIO("one\ntwo\nthree"))
         self.assertEqual(list(f), ["one\n", "two\n", "three"])
-
+        
+            
     def test_readable(self):
         with (
             tempfile.TemporaryFile() as temp,
@@ -150,7 +151,18 @@ class FileTests(unittest.TestCase):
         ):
             self.assertTrue(test_file.readable())
         self.assertFalse(test_file.readable())
+        
+        with (
+            tempfile.TemporaryFile() as temp,
+            File(temp, name="something.txt") as test_file,
+        ):
+            mock_file = mock.Mock()
+            mock_file.closed = False
+            del mock_file.readable 
+            test_file.file = mock_file
+            self.assertTrue(test_file.readable())
 
+     
     def test_writable(self):
         with (
             tempfile.TemporaryFile() as temp,
@@ -158,12 +170,30 @@ class FileTests(unittest.TestCase):
         ):
             self.assertTrue(test_file.writable())
         self.assertFalse(test_file.writable())
+        
+        
         with (
             tempfile.TemporaryFile("rb") as temp,
             File(temp, name="something.txt") as test_file,
         ):
             self.assertFalse(test_file.writable())
+            
+        
+        mock_file = mock.Mock()
+        mock_file.closed = False
+        del mock_file.writable  
+        mock_file.mode = "w"
+        test_file.file = mock_file
+        self.assertTrue(test_file.writable())
 
+        mock_file.mode = "r"
+        self.assertFalse(test_file.writable())
+
+        mock_file.closed = True
+        self.assertFalse(test_file.writable())
+        
+     
+            
     def test_seekable(self):
         with (
             tempfile.TemporaryFile() as temp,
@@ -171,6 +201,18 @@ class FileTests(unittest.TestCase):
         ):
             self.assertTrue(test_file.seekable())
         self.assertFalse(test_file.seekable())
+        
+        with (
+            tempfile.TemporaryFile() as temp,
+            File(temp, name="something.txt") as test_file,
+        ):
+            mock_file = mock.Mock()
+            mock_file.closed = False
+            del mock_file.seekable 
+            test_file.file = mock_file
+            self.assertTrue(test_file.seekable())
+
+        
 
     def test_io_wrapper(self):
         content = "vive l'été\n"
