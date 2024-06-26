@@ -4,6 +4,13 @@ import sys
 from importlib import import_module
 from importlib.util import find_spec as importlib_find
 
+#data structure to hold coverage information about the conditional branches
+coverage_info = {
+    "module_dir1": False,
+    "module_dir2": False,
+    "module_dir3": False
+}
+
 
 def cached_import(module_path, class_name):
     # Check whether module is loaded and fully initialized.
@@ -99,9 +106,18 @@ def module_dir(module):
     # Convert to list because __path__ may not support indexing.
     paths = list(getattr(module, "__path__", []))
     if len(paths) == 1:
+        coverage_info["module_dir1"] = True
         return paths[0]
     else:
         filename = getattr(module, "__file__", None)
         if filename is not None:
+            coverage_info["module_dir2"] = True
             return os.path.dirname(filename)
+        else: coverage_info["module_dir3"] = True
     raise ValueError("Cannot determine directory containing %s" % module)
+
+def print_coverage_info():
+    print("Coverage Information:")
+    for branch, executed in coverage_info.items():
+        print(f"{branch}: {'Executed' if executed else 'Not Executed'}")
+
