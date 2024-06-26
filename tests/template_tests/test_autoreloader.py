@@ -2,11 +2,19 @@ from pathlib import Path
 from unittest import mock
 
 from django.template import autoreload
+from django.template.autoreload import print_coverage_info
 from django.test import SimpleTestCase, override_settings
 from django.test.utils import require_jinja2
 
 ROOT = Path(__file__).parent.absolute()
 EXTRA_TEMPLATES_DIR = ROOT / "templates_extra"
+
+#mock loader class without get_dirs method
+class MockLoaderWithoutGetDirs:
+    def __init__(self, *args, **kwargs):
+        pass
+    def reset(self):
+        pass
 
 
 @override_settings(
@@ -26,6 +34,8 @@ EXTRA_TEMPLATES_DIR = ROOT / "templates_extra"
                 "loaders": [
                     "django.template.loaders.filesystem.Loader",
                     "django.template.loaders.app_directories.Loader",
+                    #mock loader without get_dirs
+                    f"{__name__}.MockLoaderWithoutGetDirs",
                 ],
             },
         },
@@ -93,6 +103,7 @@ class TemplateReloadTests(SimpleTestCase):
             ],
         )
 
+
     def test_get_template_directories(self):
         self.assertSetEqual(
             autoreload.get_template_directories(),
@@ -101,6 +112,8 @@ class TemplateReloadTests(SimpleTestCase):
                 ROOT / "templates",
             },
         )
+        print_coverage_info()
+
 
     @mock.patch("django.template.loaders.base.Loader.reset")
     def test_reset_all_loaders(self, mock_reset):
