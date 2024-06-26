@@ -15,6 +15,7 @@ from ssl import SSLError
 from unittest import mock, skipUnless
 
 from django.core import mail
+from django.core.exceptions import ImproperlyConfigured
 from django.core.mail import (
     DNS_NAME,
     EmailMessage,
@@ -54,7 +55,7 @@ class HeadersCheckMixin:
         self.assertTrue(
             headers.issubset(msg_headers),
             msg="Message is missing "
-            "the following headers: %s" % (headers - msg_headers),
+                "the following headers: %s" % (headers - msg_headers),
         )
 
 
@@ -821,6 +822,43 @@ class MailTests(HeadersCheckMixin, SimpleTestCase):
                 ),
                 filebased.EmailBackend,
             )
+
+        # Test Creation with a stream, must return false
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            stream = StringIO()
+            backend = filebased.EmailBackend(file_path=tmp_dir)
+            backend.stream = stream
+            self.assertFalse(backend.open())
+
+        # Check if the path given exists but is not a directory
+        with tempfile.NamedTemporaryFile() as tmp_file:
+            msg = ("Path for saving email messages exists, but is not a directory: %s"
+                   % tmp_file.name)
+
+            with self.assertRaisesMessage(ImproperlyConfigured, msg):
+                mail.get_connection(
+                    "django.core.mail.backends.filebased.EmailBackend",
+                    file_path=tmp_file.name,
+                )
+
+        # Check if the path given is not writable
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            os.chmod(tmp_dir, 0o444)
+            msg = ("Could not write to directory: %s" % tmp_dir)
+            with self.assertRaisesMessage(ImproperlyConfigured, msg):
+                mail.get_connection(
+                    "django.core.mail.backends.filebased.EmailBackend",
+                    file_path=tmp_dir,
+                )
+
+        # Test OSError handling
+        with mock.patch("os.makedirs") as makedirs:
+            makedirs.side_effect = OSError
+            with self.assertRaises(ImproperlyConfigured):
+                mail.get_connection(
+                    "django.core.mail.backends.filebased.EmailBackend",
+                    file_path=tmp_dir,
+                )
 
         if sys.platform == "win32" and not PY311:
             msg = (
