@@ -93,6 +93,46 @@ It can be seen that they indeed reflect the coverage, as measured by `coverage.p
 
 The initial coverage of this function was 50%.
 
+#### Christina Benopoulou (cbe248)
+
+##### /django/core/files/utils.py : FileProxyMixin -> readable
+
+##### /django/core/files/utils.py : FileProxyMixin -> writable
+
+I used two dictionaries to monitor and update the coverage status of the conditional branches as the program executed:
+
+![dictionaries](vu-docs-res/dictionaries.png)
+
+To track whether each conditional branch was reached, I added a line before each branch that sets a flag if the branch is executed. Here’s how it looks:
+
+![code of readable](vu-docs-res/readable_code.png)
+![code of writable](vu-docs-res/writable_code.png)
+
+After adding these lines, I ran the tests with the command: 
+
+`coverage run ./runtests.py --settings=test_sqlite files`
+
+The printed results show which branches were executed and marked as True during the tests:
+
+![results in terminal](vu-docs-res/terminal.png)
+![final results](vu-docs-res/edge_results.png)
+
+Each number corresponds to a specific branch in the readable or writable functions. The branches printed with True indicate that they were executed. 
+
+Branches 3 and 6 (lines 61 and 68 respectively) were not printed because they were not reached during the execution of the tests. This indicates that those specific branches did not have their conditions met to be executed and were therefore marked as False.
+
+Branch coverage is measured using the following formula:
+
+`number of executed branches / total number of branches x 100`
+
+For these two functions, the branch coverage is: 2/3 * 100 = 66.6% 
+
+By analyzing these results, we can identify which parts of the code need additional test cases to achieve full coverage.
+
+Below is a link to the commit made in our forked repository  that shows the instrumented code to gather coverage measurements and depicts the steps I mentioned above: 
+
+[Coverage tool](https://github.com/Aryansharma28/django_SEP/commit/f4cbc9c616bb3659e8165eef6191183336d1017e)
+
 ## Coverage improvement
 
 ### Individual tests
@@ -134,6 +174,45 @@ As aforementioned, the initial coverage of the function was 50% and was increase
 For completeness, the output of my custom implementation of the coverage tool is also provided below:
 ![Complete Instrumentation after Tests](vu-docs-res/ksy201-instrumentation-after.png)
 
+#### Christina Benopoulou (cbe248)
+
+##### /tests/files/tests.py : def readable()
+##### /tests/files/tests.py : def writable()
+
+Below are the coverage results before adding the new test cases. As mentioned earlier, the current coverage for each function stands at 66.6%. My goal is to achieve 100% coverage, and I will share the steps I took to reach this goal further below.
+
+![old terminal](vu-docs-res/terminal.png)
+![old_coverage_result](vu-docs-res/edge_results.png)
+
+After identifying the appropriate tests for the functions, I improved branch coverage by enhancing the existing test cases.
+
+Next, I re-ran the following command:
+
+`coverage run ./runtests.py --settings=test_sqlite files`
+
+This time, the printed results depicted True values for all six branches, indicating full coverage:
+
+![final_terminal](vu-docs-res/final_terminal.png)
+
+To visualize the coverage, you can run the following commands:
+
+`combine coverage`
+
+`combine html`
+
+`explorer.exe .\\coverage_html\\index.html`
+
+Then, the result will be:
+
+![readable_new](vu-docs-res/cbe248_readable.png)
+![writable_new](vu-docs-res/cbe248_writable.png)
+
+To sum up , the readable and writable functions had a coverage of 66.6%. To monitor and update the coverage status, I used dictionaries to track branch execution. After identifying and enhancing the appropriate test cases, I re-ran the tests using coverage run ./runtests.py --settings=test_sqlite files, and the results showed that all branches were executed. By running additional commands (coverage combine, coverage html, and explorer.exe .\\coverage_html\\index.html), I confirmed that we achieved 100% branch coverage, as indicated by the updated results.
+
+Attached below is a link  to a commit made in our forked repository that shows the new/enhanced test:
+
+[Coverage Improvement](https://github.com/Aryansharma28/django_SEP/commit/0129a9ba81c1fa64d53d0a75804644b9ade94328)
+
 ### Overall
 
 As we already mentioned, Django is a big tool with a very large codebase. Before showing the results after our implementation, it is important to keep in mind that changes may not be immediately visible, as we only covered a grain of salt in the entire codebase. Also, due to the default SQLite configuration of the tests, certain parts of the codebase, especially those that test the different database operations, have a coverage of 0%, as their tests are excluded. The large codebase in combination with excluded tests might drag down by a mile the weight our extended coverage has on the overall coverage of the project.
@@ -151,3 +230,8 @@ The previous coverage results were:
 - Added test cases for the functions `__init__` and `open` of the  `EmailBackend` class in the `tests.py` file of the `mail` module.
 - Increased the coverage of both functions to 100%.
 - Structured and oversaw the quality completion of the report.
+
+### Christina Benopoulou (cbe248)
+- Actively participated in team discussions, asking clarifying questions and helping my team members
+- Enhanced existing test cases by writing code for writable and readable functions
+- Increased the coverage of both functions to 100%

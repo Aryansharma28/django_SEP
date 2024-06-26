@@ -3,6 +3,17 @@ import pathlib
 
 from django.core.exceptions import SuspiciousFileOperation
 
+coverage_branch_readable = {
+    1: False,
+    2: False,
+    3: False
+}
+
+coverage_branch_writable = {
+    4: False,
+    5: False,
+    6: False
+}
 
 def validate_file_name(name, allow_relative_path=False):
     # Remove potentially dangerous names
@@ -55,16 +66,28 @@ class FileProxyMixin:
 
     def readable(self):
         if self.closed:
+            coverage_branch_readable[1] = True
+            print("1" , coverage_branch_readable[1])
             return False
         if hasattr(self.file, "readable"):
+            coverage_branch_readable[2] = True
+            print("2" , coverage_branch_readable[2])
             return self.file.readable()
+        coverage_branch_readable[3] = True
+        print("3" , coverage_branch_readable[3])
         return True
 
     def writable(self):
         if self.closed:
+            coverage_branch_writable[4] = True
+            print("4" , coverage_branch_writable[4])
             return False
         if hasattr(self.file, "writable"):
+            coverage_branch_writable[5] = True
+            print("5" , coverage_branch_writable[5])
             return self.file.writable()
+        coverage_branch_writable[6] = True
+        print("6" , coverage_branch_writable[6])
         return "w" in getattr(self.file, "mode", "")
 
     def seekable(self):
