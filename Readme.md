@@ -50,19 +50,48 @@ The above yields the following coverage report, accessible at tests/coverage_htm
 
 ### Your own coverage tool
 
-<The following is supposed to be repeated for each group member>
+#### Konstantinos Syrros (ksy201)
 
-#### Group Member Name (VUnet ID)
+##### /django/core/mail/backends/filebased.py : EmailBackend -> \_\_init\_\_
 
-##### /path/to/function/file/function1_name
+The relevant function is the `__init__` function of the `EmailBackend` class in the `filebased.py` file. The function is responsible for initializing the `EmailBackend` class for Django to have a dummy email backend, where all emails are treated as locally stored files. The function essentially carries out all required actions regarding the directory where the email files are to be stored.
 
-<Show a patch (diff) or a link to a commit made in your forked repository that shows the instrumented code to gather coverage measurements>
+Due to the nature of the tests and this function, I ran across the issue where the class was getting initialized multiple times. The parallel nature of the tests also did not help when trying to get a consistent coverage. Even when putting the coverage datastructure outside the class as global, I would still come across inaccurate results. Thus, I opted for the following:
+- Store the datastructure in an external JSON file called `my-coverage.json`, load it every time the function is called, and update it accordingly.
+- Use `--parallel=1` when running the tests, in order to avoid issues with the parallel nature of the tests, both when it comes to the coverage itself and the file operations.
+- The aforementioned JSON file will get updated, and for reproducibility, I have also included the original `my-coverage-base.json` file alongside. The process is to copy the base file to `my-coverage.json` before running the tests. While this is not the most efficient way to handle the coverage, and creating a wrapper tool to encapsulate and handle all this, as well as output everything in a more user-friendly manner, would be the ideal solution, I believe that it falls outside the scope of this assignment, and would come closer to recreating the structure of `coverage.py`.
 
-<Provide a screenshot of the coverage results output by the instrumentation>
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/aeba14c6156b3700f2039d986cd2a989f5886b58)
 
-##### /path/to/function/file/function2_name
+In the above commit you can see the instrumentation of both Function 1 and Function 2, since they were instrumented at the same time.
 
-<Provide the same kind of information provided for Function 1>
+The results of the instrumentation can be seen below:
+
+![Instrumentation Results of Function 1](vu-docs-res/ksy201-instrumentation-1.png)
+
+It can be seen that they indeed reflect the coverage, as measured by `coverage.py`:
+
+![Coverage Results of Function 1](vu-docs-res/ksy201-coverage-1.png)
+
+The initial coverage of this function was 50%.
+
+##### /django/core/mail/backends/filebased.py : EmailBackend -> open
+
+This function is part of the same file and class as the previous function. The `open` function is responsible for opening the file (stream) where the email is to be stored. I chose to follow the same instrumentation technique as described earlier.
+
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/aeba14c6156b3700f2039d986cd2a989f5886b58)
+
+In the above commit you can see the instrumentation of both Function 1 and Function 2, since they were instrumented at the same time.
+
+The results of the instrumentation can be seen below:
+
+![Instrumentation Results of Function 1](vu-docs-res/ksy201-instrumentation-2.png)
+
+It can be seen that they indeed reflect the coverage, as measured by `coverage.py`:
+
+![Coverage Results of Function 1](vu-docs-res/ksy201-coverage-2.png)
+
+The initial coverage of this function was 50%.
 
 ## Coverage improvement
 
