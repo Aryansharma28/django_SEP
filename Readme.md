@@ -42,56 +42,112 @@ coverage run ./runtests.py --settings=test_sqlite # Runs the tests with coverage
 coverage combine # Combines the coverage data from all the test runs.
 coverage html # Generates the HTML coverage report.
 ```
-[//]: # (<Show the coverage results provided by the existing tool with a screenshot>)
 
-
-The above yields the following coverage report, accessible at tests/coverage_html/index.html:
+The above yields the following coverage report, accessible at /tests/coverage_html/index.html:
 ![Coverage Results](vu-docs-res/coverage-html.png)
+
+More details regarding the coverage of the chosen functions will be provided in the following sections, as Django is a big project, so here we are only showing the overall result.
 
 ### Your own coverage tool
 
-<The following is supposed to be repeated for each group member>
+#### Konstantinos Syrros (ksy201)
 
-#### Group Member Name (VUnet ID)
+##### /django/core/mail/backends/filebased.py : EmailBackend -> \_\_init\_\_
 
-##### /path/to/function/file/function1_name
+The relevant function is the `__init__` function of the `EmailBackend` class in the `filebased.py` file. The function is responsible for initializing the `EmailBackend` class for Django to have a dummy email backend, where all emails are treated as locally stored files. The function essentially carries out all required actions regarding the directory where the email files are to be stored.
 
-<Show a patch (diff) or a link to a commit made in your forked repository that shows the instrumented code to gather coverage measurements>
+Due to the nature of the tests and this function, I ran across the issue where the class was getting initialized multiple times. The parallel nature of the tests also did not help when trying to get a consistent coverage. Even when putting the coverage datastructure outside the class as global, I would still come across inaccurate results. Thus, I opted for the following:
+- Store the datastructure in an external JSON file called `my-coverage.json`, load it every time the function is called, and update it accordingly.
+- Use `--parallel=1` when running the tests, in order to avoid issues with the parallel nature of the tests, both when it comes to the coverage itself and the file operations.
+- The aforementioned JSON file will get updated, and for reproducibility, I have also included the original `my-coverage-base.json` file alongside. The process is to copy the base file to `my-coverage.json` before running the tests. While this is not the most efficient way to handle the coverage, and creating a wrapper tool to encapsulate and handle all this, as well as output everything in a more user-friendly manner, would be the ideal solution, I believe that it falls outside the scope of this assignment, and would come closer to recreating the structure of `coverage.py`.
 
-<Provide a screenshot of the coverage results output by the instrumentation>
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/aeba14c6156b3700f2039d986cd2a989f5886b58)
 
-##### /path/to/function/file/function2_name
+In the above commit you can see the instrumentation of both Function 1 and Function 2, since they were instrumented at the same time.
 
-<Provide the same kind of information provided for Function 1>
+The results of the instrumentation can be seen below:
+
+![Instrumentation Results of Function 1](vu-docs-res/ksy201-instrumentation-1.png)
+
+It can be seen that they indeed reflect the coverage, as measured by `coverage.py`:
+
+![Coverage Results of Function 1](vu-docs-res/ksy201-coverage-1.png)
+
+The initial coverage of this function was 50%.
+
+##### /django/core/mail/backends/filebased.py : EmailBackend -> open
+
+This function is part of the same file and class as the previous function. The `open` function is responsible for opening the file (stream) where the email is to be stored. I chose to follow the same instrumentation technique as described earlier.
+
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/aeba14c6156b3700f2039d986cd2a989f5886b58)
+
+In the above commit you can see the instrumentation of both Function 1 and Function 2, since they were instrumented at the same time.
+
+The results of the instrumentation can be seen below:
+
+![Instrumentation Results of Function 1](vu-docs-res/ksy201-instrumentation-2.png)
+
+It can be seen that they indeed reflect the coverage, as measured by `coverage.py`:
+
+![Coverage Results of Function 1](vu-docs-res/ksy201-coverage-2.png)
+
+The initial coverage of this function was 50%.
 
 ## Coverage improvement
 
 ### Individual tests
 
-<The following is supposed to be repeated for each group member>
+#### Konstantinos Syrros (ksy201)
 
-#### Group Member Name (VUnet ID)
+##### /tests/mail/tests.py : MailTests -> test_backend_arg
 
-##### /path/to/test/file/test1_name
+This test is part of the `MailTests` class in the `tests.py` file in the `mail` module. The test is responsible for checking whether the provided backend is properly configured and initialized. This test is rather large by default and covers various backends. Since the two functions I have chosen to instrument are part of the same backend, they are both tested under this one test. However, different test cases, specifically 4 of them, have been added under this test function, to cover both functions. My implementations can be found between lines 826 and 862 (inclusive).
 
-<Show a patch (diff) or a link to a commit made in your forked repository that shows the new/enhanced test>
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/c3c095719425b01dd6ff05a4ca6ab59899a2abcc)
 
-<Provide a screenshot of the old coverage results (the same as you already showed above)>
+###### Tests for Function 1 (EmailBackend -> \_\_init\_\_)
 
-<Provide a screenshot of the new coverage results>
+It was relatively effortless to derive the test cases needed to cover this function, as they mostly revolved around improper configuration, and raised the related errors. However, there were no test implementations to check those cases. The first case was to check whether the path provided is not a directory, the second was if the directory could not be created for any generic OS Error, and the third one was whether the directory could not be written to.
 
-<State the coverage improvement with a number and elaborate on why the coverage is improved>
+When writing the tests, I followed the Django structure as it was implemented in the other tests. For the first test, I created a temporary file, passed its path to the backend, and checked whether the proper exception with the appropriate message was raised. For the second test, I used a mock patch to the `makedirs` call, forcing it to throw an `OSError` as a side effect. I then proceeded to call the backend, and checked if the error was thrown with the appropriate message. For the third test, I created a temporary directory, set its permissions to 444, making it read-only, and passed it to the backend, checking whether the proper exception with the appropriate message was raised.
 
-##### /path/to/test/file/test2_name
+The old coverage results for this function, as aforementioned, are (50%):
+![Coverage Results of Function 1 Before](vu-docs-res/ksy201-coverage-1.png)
 
-<Provide the same kind of information provided for Test 1>
+The implementation of the tests led to 100% coverage of the function, as seen below:
+![Coverage Results of Function 1 After](vu-docs-res/ksy201-coverage-1-after.png)
+
+As aforementioned, the initial coverage of the function was 50% and was increased to 100%, a 100% increase. The reason for this is that the uncovered parts of the function were the exceptions for handling edge cases. With the addition of each test, the conditions for those branches are now met, and the code inside is reached, increasing the coverage.
+
+###### Tests for Function 2 (EmailBackend -> open)
+
+The second function was a bit more challenging to derive the test cases for, as it did not include descriptive error messages. The function would succeed if the stream passed to the backend was None, and would return False if the stream was not empty. The first case was covered as it is the default implementation, and the second case was not covered at all. After going through the implementation of the backend more thoroughly, I derived that this is the expected behavior. Thus, for the tests, I chose to create a simple String Stream, and pass it to the backend, then calling the `open()` function of the backend to see its behavior. Indeed, it returned false, and the test for it was produced.
+
+The old coverage results for this function, as aforementioned, are (50%):
+![Coverage Results of Function 2 Before](vu-docs-res/ksy201-coverage-2.png)
+
+The implementation of the tests led to 100% coverage of the function, as seen below:
+![Coverage Results of Function 2 After](vu-docs-res/ksy201-coverage-2-after.png)
+
+As aforementioned, the initial coverage of the function was 50% and was increased to 100%, a 100% increase. The reason for this is that the non-default case of the Stream not being empty has now been covered. This is not a case that would be reached in the default implementation, but with the test case created, the conditions for this branch can be reached, and thus, the coverage is increased. While it is unlikely that this branch will be reached during normal Django operation, it is still important to have it covered, as it is part of the function's implementation, and should be tested for failsafe reasons (to account for potential system failures).
+
+For completeness, the output of my custom implementation of the coverage tool is also provided below:
+![Complete Instrumentation after Tests](vu-docs-res/ksy201-instrumentation-after.png)
 
 ### Overall
 
-<Provide a screenshot of the old coverage results by running an existing tool (the same as you already showed above)>
+As we already mentioned, Django is a big tool with a very large codebase. Before showing the results after our implementation, it is important to keep in mind that changes may not be immediately visible, as we only covered a grain of salt in the entire codebase. Also, due to the default SQLite configuration of the tests, certain parts of the codebase, especially those that test the different database operations, have a coverage of 0%, as their tests are excluded. The large codebase in combination with excluded tests might drag down by a mile the weight our extended coverage has on the overall coverage of the project.
 
-<Provide a screenshot of the new coverage results by running the existing tool using all test modifications made by the group>
+The previous coverage results were:
+![Coverage Results](vu-docs-res/coverage-html.png)
+
+[//]: # (<Provide a screenshot of the new coverage results by running the existing tool using all test modifications made by the group>)
 
 ## Statement of individual contributions
-
-<Write what each group member did>
+### Konstantinos Syrros (ksy201)
+- Assisted in assessing the suitability of the project selected for the assignment.
+- Provided help in setting up the project and testing environment to the team members.
+- Instrumented the functions `__init__` and `open` of the  `EmailBackend` class in the `filebased.py` file of the `mail` module.
+- Added test cases for the functions `__init__` and `open` of the  `EmailBackend` class in the `tests.py` file of the `mail` module.
+- Increased the coverage of both functions to 100%.
+- Structured and oversaw the quality completion of the report.

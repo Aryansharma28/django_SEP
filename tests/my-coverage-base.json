@@ -1,0 +1,34 @@
+{
+    "K11": {
+        "name": "file_path is not None",
+        "covered": "false"
+    },
+    "K12": {
+        "name": "file_path is None",
+        "covered": "false"
+    },
+    "K13": {
+        "name": "Path for saving email messages exists, but is not a directory",
+        "covered": "false"
+    },
+    "K14": {
+        "name": "Could not create directory for saving email messages",
+        "covered": "false"
+    },
+    "K15": {
+        "name": "Could not write to directory",
+        "covered": "false"
+    },
+    "K16": {
+        "name": "Call super() with stream=None",
+        "covered": "false"
+    },
+    "K21": {
+        "name": "Open Stream is None",
+        "covered": "false"
+    },
+    "K22": {
+        "name": "Open Stream is not None",
+        "covered": "false"
+    }
+}
