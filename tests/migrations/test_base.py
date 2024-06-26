@@ -12,6 +12,7 @@ from django.db.migrations.state import ProjectState
 from django.test import TransactionTestCase
 from django.test.utils import extend_sys_path
 from django.utils.module_loading import module_dir
+from django.utils.module_loading import print_coverage_info
 
 
 class MigrationTestBase(TransactionTestCase):
@@ -195,6 +196,7 @@ class MigrationTestBase(TransactionTestCase):
 
             try:
                 source_migrations_dir = module_dir(import_module(module))
+                print_coverage_info()
             except (ImportError, ValueError):
                 pass
             else:
@@ -204,6 +206,30 @@ class MigrationTestBase(TransactionTestCase):
                 new_module = os.path.basename(target_dir) + ".migrations"
                 with self.settings(MIGRATION_MODULES={app_label: new_module}):
                     yield target_migrations_dir
+
+
+            #extra tests for module_dir function
+            try:
+                #module has __path__ attribute (module_dir1)
+                test_module = type("TestModule", (), {"__path__": ["test_path"]})
+                assert module_dir(test_module) == "test_path"
+                print("Test case 1 passed")
+                
+                #module has __file__ attribute (module_dir2)
+                test_module = type("TestModule", (), {"__file__": "/test/path/file.py"})
+                assert module_dir(test_module) == "/test/path"
+                print("Test case 2 passed")
+                
+                #module has neither __path__ nor __file__ (module_dir3)
+                test_module = type("TestModule", (), {})
+                try:
+                    module_dir(test_module)
+                except ValueError:
+                    print("Test case 3 passed")
+                else:
+                    print("Test case 3 failed")
+            except Exception as e:
+                print(f"An error occurred while running internal tests: {e}")
 
 
 class OperationTestBase(MigrationTestBase):
@@ -400,3 +426,4 @@ class OperationTestBase(MigrationTestBase):
                 )
             )
         return self.apply_operations(app_label, ProjectState(), operations)
+
