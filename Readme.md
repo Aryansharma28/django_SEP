@@ -290,7 +290,7 @@ Attached below is a link  to a commit made in our forked repository that shows t
 
 ##### tests/migrations/test_base.py -> temporary_migration_module
 
-[Commit that shows the new / enhanced test](hhttps://github.com/Aryansharma28/django_SEP/commit/efe0a0eb75124482b5a2adc108a3102b5d2eaaab)
+[Commit that shows the new / enhanced test](https://github.com/Aryansharma28/django_SEP/commit/efe0a0eb75124482b5a2adc108a3102b5d2eaaab)
 
 
 For comparison, here are the old coverage results as shown above: 
