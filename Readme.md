@@ -52,17 +52,80 @@ The above yields the following coverage report, accessible at tests/coverage_htm
 
 <The following is supposed to be repeated for each group member>
 
-#### Group Member Name (VUnet ID)
+#### Maria Claudia Montalvo (cmo209)
 
-##### /path/to/function/file/function1_name
+##### /django/utils/module_loading.py -> module_dir
 
-<Show a patch (diff) or a link to a commit made in your forked repository that shows the instrumented code to gather coverage measurements>
+The data structure I chose to hold the coverage information about the conditional branches was a dictionary, which is visible here: 
+
+![dictionary](vu-docs-res/cmo209_data_structure_modules.png)
+
+The module_dirs function had 3 main branches, for each of which I added flags to determine whether they had been executed or not:
+
+![dictionary](vu-docs-res/cmo209_flags_modules.png)
+
+As is observable, each of the flags get triggered if the branch is executed. I have also created a print_coverage_info() function to print the coverage information to the console. Once that was completed, I ran the following command to the console: 
+
+`coverage run ./runtests.py --settings=test_sqlite migrations`
+
+This runs the coverage specifically within the migrations folder, that is, where the module_loading file and thus the module_dir function is located. The reason for this is to not have to check coverage for the whole project and reduce runtime. The output of this command on the console was as follows: 
+
+![output](vu-docs-res/cmo209_console_output_before.png)
+![outputHTML](vu-docs-res/cmo209_first_coverage_modules.png)
+
+Each of these module_dir# represents each of the 3 branches, and showcases whether they are being executed or not. At the moment the only branch that is being reached is module_dir1. 
+
+To measure branch coverage, the following formula is used:
+
+`number of executed branches / total number of branches x 100`
+
+For this function, the number of executed branches is 1 and the total number of branches is 3. Following this:
+
+`1 / 3 x 100 = 33.3`
+
+So the current total branch coverage is 33.3%. Using this coverage instrumentation, it is now possible to determine the sections of the function that need enhanced testing to increase branch coverage.
+
+The link to the relevant commit regarding the instrumented code used to make the coverage measurements can be found below:
+
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/be7a529e0c67bc42c8662b0cd97a1ad364c56002)
 
 <Provide a screenshot of the coverage results output by the instrumentation>
 
-##### /path/to/function/file/function2_name
+##### django/template/autoreload.py -> get_template_directories
 
-<Provide the same kind of information provided for Function 1>
+
+The data structure I chose to hold the coverage information about the conditional branches was a dictionary, which is visible here: 
+
+![dictionary](vu-docs-res/cmo209_data_structure_autoreload.png)
+
+The get_template_directories function had 6 main branches, for each of which I added flags to determine whether they had been executed or not:
+
+![dictionary](vu-docs-res/cmo209_flags_autoreload.png)
+
+As is observable, each of the flags get triggered if the branch is executed. I have once again, created a print_coverage_info() function like above to print the coverage information to the console (not visible on the screenshot but same code). Once that was completed, I ran the following command to the console: 
+
+`coverage run ./runtests.py --settings=test_sqlite template_tests`
+
+This runs the coverage specifically within the template_tests folder, that is, where the autoreload file and thus the get_template_directories is located. The reason for this is to not have to check coverage for the whole project and reduce runtime. The output of this command on the console was as follows: 
+
+![output2](vu-docs-res/cmo209_console_output_before2.png)
+![output2HTML](vu-docs-res/cmo209_first_coverage_auto.png)
+
+Each of these represents one of the 6 branches, and showcases whether they are being executed or not. At the moment the only branch that is not being reached is that of loader_not_get_dirs, that is, the branch where it is tested if the loader that was fetched from the template backend has a 'get_dirs' method or not. 
+
+To measure branch coverage, the following formula is used:
+
+`number of executed branches / total number of branches x 100`
+
+For this function, the number of executed branches is 5 and the total number of branches is 6. Following this:
+
+`5 / 6 x 100 = 83.3`
+
+So the current total branch coverage is 83.3%. Using this coverage instrumentation, it is now possible to determine the sections of the function that need enhanced testing to increase branch coverage.
+
+The link to the relevant commit regarding the instrumented code used to make the coverage measurements can be found below:
+
+[Relevant Commit](https://github.com/Aryansharma28/django_SEP/commit/e458112796b0f3014f089149d8bfcb46cfe93ed8)
 
 ## Coverage improvement
 
@@ -70,21 +133,50 @@ The above yields the following coverage report, accessible at tests/coverage_htm
 
 <The following is supposed to be repeated for each group member>
 
-#### Group Member Name (VUnet ID)
+#### Maria Claudia Montalvo (cmo209)
 
-##### /path/to/test/file/test1_name
+##### tests/migrations/test_base.py -> temporary_migration_module
 
-<Show a patch (diff) or a link to a commit made in your forked repository that shows the new/enhanced test>
+[Commit that shows the new / enhanced test](hhttps://github.com/Aryansharma28/django_SEP/commit/efe0a0eb75124482b5a2adc108a3102b5d2eaaab)
 
-<Provide a screenshot of the old coverage results (the same as you already showed above)>
 
-<Provide a screenshot of the new coverage results>
+For comparison, here are the old coverage results as shown above: 
 
-<State the coverage improvement with a number and elaborate on why the coverage is improved>
+![output](vu-docs-res/cmo209_console_output_before.png)
 
-##### /path/to/test/file/test2_name
+For this function, my aim was to reach 100% coverage. Once I had identified which branches required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again: 
 
-<Provide the same kind of information provided for Test 1>
+`coverage run ./runtests.py --settings=test_sqlite migrations`
+
+From this, here are the new coverage results: 
+
+![output](vu-docs-res/cmo209_console_output_after2.png)
+
+The branch coverage has improved to 100%. The reason for which this coverage has improved is because I have added an extra global class at the beginning of the file, 3 extra test cases in the temporary_migration_module function; one for a single `__path__`attribute (a test which was already there but I added once again anyway for the sake of uniformity), one for a `__file__`attribute within the module, and one for neither (empty). The two latter tested the remaining two branches. After re-running the coverage, here are the results in the html file: 
+
+![outputAfter](vu-docs-res/cmo209_full_coverage_modules.png)
+
+
+##### tests/template_tests/test_autoreloader.py -> test_get_template_directories
+
+[Commit that shows the new / enhanced test](https://github.com/Aryansharma28/django_SEP/commit/64b6267f6102aad935945473c5711ce99b31ab7e)
+
+
+For comparison, here are the old coverage results as shown above: 
+
+![output2](vu-docs-res/cmo209_console_output_before2.png)
+
+For this function, my aim was to reach 100% coverage. Once I had identified which branch required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again: 
+
+`coverage run ./runtests.py --settings=test_sqlite template_tests`
+
+From this, here are the new coverage results: 
+
+![output](vu-docs-res/cmo209_console_output_after2.png)
+
+The branch coverage has improved to 100%. The reason for which this coverage has improved is because I have added a mock loader class in which there is no get_dirs method, so that when the mock loader gets called in the function (as in the override settings it was listed as a test case possibility) this triggered the missing branch. After re-running the coverage, here are the results in the html file: 
+
+![outputAfter](vu-docs-res/cmo209_full_coverage_auto.png)
 
 ### Overall
 
@@ -95,3 +187,10 @@ The above yields the following coverage report, accessible at tests/coverage_htm
 ## Statement of individual contributions
 
 <Write what each group member did>
+
+### Maria Claudia Montalvo (cmo209)
+- Increased the coverage of both functions 100%
+- Instrumented and created further test cases for the `module_dir` function within the module_loading.py file
+- Instrumented and created further test cases for the `get_template_directories` function in the autoreload.py file. 
+- Aided other members of the team with short explanations, for instance regarding the necessary commands 
+- Actively asked questions and did research in order to fully grasp the scope of the task 
