@@ -5,6 +5,12 @@ from django.core.management.base import BaseCommand
 from django.core.management.utils import get_command_line_option
 from django.test.runner import get_max_test_processes
 from django.test.utils import NullTimeKeeper, TimeKeeper, get_runner
+from io import StringIO
+from unittest import TestCase
+from unittest.mock import patch
+
+from django.core.management import call_command
+from django.db import DEFAULT_DB_ALIAS
 
 
 class Command(BaseCommand):
@@ -64,3 +70,10 @@ class Command(BaseCommand):
         time_keeper.print_results()
         if failures:
             sys.exit(1)
+
+class FlushCommandTestCase(TestCase):
+    @patch("builtins.input", return_value="no")
+    def test_handle_cancel_flush(self, mock_input):
+        out = StringIO()
+        call_command("flush", interactive=True, stdout=out)
+        self.assertIn("Flush cancelled.", out.getvalue())

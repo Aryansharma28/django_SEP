@@ -4,6 +4,18 @@ from django.conf import settings
 from django.utils.crypto import constant_time_compare, salted_hmac
 from django.utils.http import base36_to_int, int_to_base36
 
+## creat ecoverage info function
+branch_coverage = {
+    "branch_1": False, 
+    "branch_2": False,
+    "branch_3": False,
+    "branch_4": False,
+    "branch_5": False,
+    "branch_6": False,
+    "branch_7": False,
+    "branch_8": False,
+}
+    
 
 class PasswordResetTokenGenerator:
     """
@@ -52,17 +64,22 @@ class PasswordResetTokenGenerator:
         """
         Check that a password reset token is correct for a given user.
         """
+
         if not (user and token):
+            branch_coverage["branch_1"] = True
             return False
+
         # Parse the token
         try:
             ts_b36, _ = token.split("-")
         except ValueError:
+            branch_coverage["branch_2"] = True
             return False
 
         try:
             ts = base36_to_int(ts_b36)
         except ValueError:
+            branch_coverage["branch_3"] = True
             return False
 
         # Check that the timestamp/uid has not been tampered with
@@ -71,14 +88,19 @@ class PasswordResetTokenGenerator:
                 self._make_token_with_timestamp(user, ts, secret),
                 token,
             ):
+                branch_coverage["branch_4"] = True
                 break
         else:
+            branch_coverage["branch_5"] = True
             return False
 
         # Check the timestamp is within limit.
         if (self._num_seconds(self._now()) - ts) > settings.PASSWORD_RESET_TIMEOUT:
+            branch_coverage["branch_6"] = True
             return False
 
+        branch_coverage["branch_7"] = True #ELSE
+        branch_coverage["branch_8"] = True
         return True
 
     def _make_token_with_timestamp(self, user, timestamp, secret):
@@ -127,6 +149,12 @@ class PasswordResetTokenGenerator:
     def _now(self):
         # Used for mocking in tests
         return datetime.now()
+    
+def print_coverage():
+    for branch, executed in branch_coverage.items():
+        print(f"{branch} was {'hit' if executed else 'not hit'}")
+
+    
 
 
 default_token_generator = PasswordResetTokenGenerator()
