@@ -34,6 +34,17 @@ host_validation_re = _lazy_re_compile(
     r"^([a-z0-9.-]+|\[[a-f0-9]*:[a-f0-9.:]+\])(?::([0-9]+))?$"
 )
 
+branch_coverage = {
+        "branch_1": False, 
+        "branch_2": False,  
+        "branch_3": False,   
+        "branch_4": False
+    }
+
+def print_coverage():
+    for branch, hit in branch_coverage.items():
+        print(f"{branch} was {'hit' if hit else 'not hit'}")
+
 
 class UnreadablePostError(OSError):
     pass
@@ -176,7 +187,7 @@ class HttpRequest:
                 else ""
             ),
         )
-
+    
     def get_signed_cookie(self, key, default=RAISE_ERROR, salt="", max_age=None):
         """
         Attempt to return a signed cookie. If the signature fails or the
@@ -187,8 +198,10 @@ class HttpRequest:
             cookie_value = self.COOKIES[key]
         except KeyError:
             if default is not RAISE_ERROR:
+                branch_coverage["branch_1"] = True
                 return default
             else:
+                branch_coverage["branch_2"] = True
                 raise
         try:
             value = signing.get_cookie_signer(salt=key + salt).unsign(
@@ -196,8 +209,10 @@ class HttpRequest:
             )
         except signing.BadSignature:
             if default is not RAISE_ERROR:
+                branch_coverage["branch_3"] = True
                 return default
             else:
+                branch_coverage["branch_4"] = True
                 raise
         return value
 

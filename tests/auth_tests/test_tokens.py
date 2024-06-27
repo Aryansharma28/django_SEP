@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.contrib.auth.tokens import print_coverage ## added
 from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -84,6 +85,9 @@ class TokenGeneratorTest(TestCase):
                 now + timedelta(seconds=(settings.PASSWORD_RESET_TIMEOUT + 1))
             )
             self.assertIs(p4.check_token(user, tk1), False)
+            print()
+            print("coverage for check_token()")
+            print_coverage()
 
     def test_check_token_with_nonexistent_token_and_user(self):
         user = User.objects.create_user("tokentestuser", "test2@example.com", "testpw")
@@ -175,3 +179,17 @@ class TokenGeneratorTest(TestCase):
         p2 = PasswordResetTokenGenerator()
         p2.secret_fallbacks = []
         self.assertIs(p2.check_token(user, tk), False)
+    
+    
+    
+    def test_check_token_exceptions(self):
+        user = User.objects.create_user("tokentestuser", "test2@example.com", "testpw")
+        p2 = PasswordResetTokenGenerator()
+        self.assertFalse(p2.check_token(user, "abcdef"))
+        self.assertFalse(p2.check_token(user, "abc-def-ghi"))
+        self.assertFalse(p2.check_token(user, "!@#-abc"))
+        self.assertFalse(p2.check_token(user, "abc-def"))
+    
+
+       
+
