@@ -108,7 +108,7 @@ To track whether each conditional branch was reached, I added a line before each
 ![code of readable](vu-docs-res/readable_code.png)
 ![code of writable](vu-docs-res/writable_code.png)
 
-After adding these lines, I ran the tests with the command: 
+After adding these lines, I ran the tests with the command:
 
 `coverage run ./runtests.py --settings=test_sqlite files`
 
@@ -117,7 +117,7 @@ The printed results show which branches were executed and marked as True during 
 ![results in terminal](vu-docs-res/terminal.png)
 ![final results](vu-docs-res/edge_results.png)
 
-Each number corresponds to a specific branch in the readable or writable functions. The branches printed with True indicate that they were executed. 
+Each number corresponds to a specific branch in the readable or writable functions. The branches printed with True indicate that they were executed.
 
 Branches 3 and 6 (lines 61 and 68 respectively) were not printed because they were not reached during the execution of the tests. This indicates that those specific branches did not have their conditions met to be executed and were therefore marked as False.
 
@@ -125,11 +125,11 @@ Branch coverage is measured using the following formula:
 
 `number of executed branches / total number of branches x 100`
 
-For these two functions, the branch coverage is: 2/3 * 100 = 66.6% 
+For these two functions, the branch coverage is: 2/3 * 100 = 66.6%
 
 By analyzing these results, we can identify which parts of the code need additional test cases to achieve full coverage.
 
-Below is a link to the commit made in our forked repository  that shows the instrumented code to gather coverage measurements and depicts the steps I mentioned above: 
+Below is a link to the commit made in our forked repository  that shows the instrumented code to gather coverage measurements and depicts the steps I mentioned above:
 
 [Coverage tool](https://github.com/Aryansharma28/django_SEP/commit/f4cbc9c616bb3659e8165eef6191183336d1017e)
 
@@ -137,7 +137,7 @@ Below is a link to the commit made in our forked repository  that shows the inst
 
 ##### /django/utils/module_loading.py -> module_dir
 
-The data structure I chose to hold the coverage information about the conditional branches was a dictionary, which is visible here: 
+The data structure I chose to hold the coverage information about the conditional branches was a dictionary, which is visible here:
 
 ![dictionary](vu-docs-res/cmo209_data_structure_modules.png)
 
@@ -145,16 +145,16 @@ The module_dirs function had 3 main branches, for each of which I added flags to
 
 ![dictionary](vu-docs-res/cmo209_flags_modules.png)
 
-As is observable, each of the flags get triggered if the branch is executed. I have also created a print_coverage_info() function to print the coverage information to the console. Once that was completed, I ran the following command to the console: 
+As is observable, each of the flags get triggered if the branch is executed. I have also created a print_coverage_info() function to print the coverage information to the console. Once that was completed, I ran the following command to the console:
 
 `coverage run ./runtests.py --settings=test_sqlite migrations`
 
-This runs the coverage specifically within the migrations folder, that is, where the module_loading file and thus the module_dir function is located. The reason for this is to not have to check coverage for the whole project and reduce runtime. The output of this command on the console was as follows: 
+This runs the coverage specifically within the migrations folder, that is, where the module_loading file and thus the module_dir function is located. The reason for this is to not have to check coverage for the whole project and reduce runtime. The output of this command on the console was as follows:
 
 ![output](vu-docs-res/cmo209_console_output_before.png)
 ![outputHTML](vu-docs-res/cmo209_first_coverage_modules.png)
 
-Each of these module_dir# represents each of the 3 branches, and showcases whether they are being executed or not. At the moment the only branch that is being reached is module_dir1. 
+Each of these module_dir# represents each of the 3 branches, and showcases whether they are being executed or not. At the moment the only branch that is being reached is module_dir1.
 
 To measure branch coverage, the following formula is used:
 
@@ -173,7 +173,7 @@ The link to the relevant commit regarding the instrumented code used to make the
 ##### django/template/autoreload.py -> get_template_directories
 
 
-The data structure I chose to hold the coverage information about the conditional branches was a dictionary, which is visible here: 
+The data structure I chose to hold the coverage information about the conditional branches was a dictionary, which is visible here:
 
 ![dictionary](vu-docs-res/cmo209_data_structure_autoreload.png)
 
@@ -181,16 +181,16 @@ The get_template_directories function had 6 main branches, for each of which I a
 
 ![dictionary](vu-docs-res/cmo209_flags_autoreload.png)
 
-As is observable, each of the flags get triggered if the branch is executed. I have once again, created a print_coverage_info() function like above to print the coverage information to the console (not visible on the screenshot but same code). Once that was completed, I ran the following command to the console: 
+As is observable, each of the flags get triggered if the branch is executed. I have once again, created a print_coverage_info() function like above to print the coverage information to the console (not visible on the screenshot but same code). Once that was completed, I ran the following command to the console:
 
 `coverage run ./runtests.py --settings=test_sqlite template_tests`
 
-This runs the coverage specifically within the template_tests folder, that is, where the autoreload file and thus the get_template_directories is located. The reason for this is to not have to check coverage for the whole project and reduce runtime. The output of this command on the console was as follows: 
+This runs the coverage specifically within the template_tests folder, that is, where the autoreload file and thus the get_template_directories is located. The reason for this is to not have to check coverage for the whole project and reduce runtime. The output of this command on the console was as follows:
 
 ![output2](vu-docs-res/cmo209_console_output_before2.png)
 ![output2HTML](vu-docs-res/cmo209_first_coverage_auto.png)
 
-Each of these represents one of the 6 branches, and showcases whether they are being executed or not. At the moment the only branch that is not being reached is that of loader_not_get_dirs, that is, the branch where it is tested if the loader that was fetched from the template backend has a 'get_dirs' method or not. 
+Each of these represents one of the 6 branches, and showcases whether they are being executed or not. At the moment the only branch that is not being reached is that of loader_not_get_dirs, that is, the branch where it is tested if the loader that was fetched from the template backend has a 'get_dirs' method or not.
 
 To measure branch coverage, the following formula is used:
 
@@ -214,7 +214,7 @@ This is a common function that i have used for both of the funcitons to check th
 ![image](https://github.com/Aryansharma28/django_SEP/assets/89016404/3167bc03-2dcb-4506-aa6b-0ba7d4564b61)
 
 
-##### 1.django/http/request.py -> get_signed_cookie() 
+##### 1.django/http/request.py -> get_signed_cookie()
 
 I used dictionaries to monitor and and update the coverage status of the conditional branches as the program executed:
 
@@ -267,7 +267,7 @@ As is observable, each of the flags get triggered if the branch is executed. I h
 
 ![image](https://github.com/Aryansharma28/django_SEP/assets/89016404/a4ab7d24-97a7-4559-8a2b-2cdb4e08ae40)
 
-Each of these represents one of the 8 branches, and showcases whether they are being executed or not. At the moment the only branch that is not being reached is that of branch 2 and branch 3, that is, the branch where it is tested if the loader that was fetched from the template backend has a 'get_dirs' method or not. 
+Each of these represents one of the 8 branches, and showcases whether they are being executed or not. At the moment the only branch that is not being reached is that of branch 2 and branch 3, that is, the branch where it is tested if the loader that was fetched from the template backend has a 'get_dirs' method or not.
 
 To measure branch coverage, the following formula is used:
 
@@ -370,19 +370,19 @@ Attached below is a link  to a commit made in our forked repository that shows t
 [Commit that shows the new / enhanced test](https://github.com/Aryansharma28/django_SEP/commit/efe0a0eb75124482b5a2adc108a3102b5d2eaaab)
 
 
-For comparison, here are the old coverage results as shown above: 
+For comparison, here are the old coverage results as shown above:
 
 ![output](vu-docs-res/cmo209_console_output_before.png)
 
-For this function, my aim was to reach 100% coverage. Once I had identified which branches required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again: 
+For this function, my aim was to reach 100% coverage. Once I had identified which branches required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again:
 
 `coverage run ./runtests.py --settings=test_sqlite migrations`
 
-From this, here are the new coverage results: 
+From this, here are the new coverage results:
 
 ![output](vu-docs-res/cmo209_console_output_after2.png)
 
-The branch coverage has improved to 100%. The reason for which this coverage has improved is because I have added an extra global class at the beginning of the file, 3 extra test cases in the temporary_migration_module function; one for a single `__path__`attribute (a test which was already there but I added once again anyway for the sake of uniformity), one for a `__file__`attribute within the module, and one for neither (empty). The two latter tested the remaining two branches. After re-running the coverage, here are the results in the html file: 
+The branch coverage has improved to 100%. The reason for which this coverage has improved is because I have added an extra global class at the beginning of the file, 3 extra test cases in the temporary_migration_module function; one for a single `__path__`attribute (a test which was already there but I added once again anyway for the sake of uniformity), one for a `__file__`attribute within the module, and one for neither (empty). The two latter tested the remaining two branches. After re-running the coverage, here are the results in the html file:
 
 ![outputAfter](vu-docs-res/cmo209_full_coverage_modules.png)
 
@@ -392,19 +392,19 @@ The branch coverage has improved to 100%. The reason for which this coverage has
 [Commit that shows the new / enhanced test](https://github.com/Aryansharma28/django_SEP/commit/64b6267f6102aad935945473c5711ce99b31ab7e)
 
 
-For comparison, here are the old coverage results as shown above: 
+For comparison, here are the old coverage results as shown above:
 
 ![output2](vu-docs-res/cmo209_console_output_before2.png)
 
-For this function, my aim was to reach 100% coverage. Once I had identified which branch required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again: 
+For this function, my aim was to reach 100% coverage. Once I had identified which branch required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again:
 
 `coverage run ./runtests.py --settings=test_sqlite template_tests`
 
-From this, here are the new coverage results: 
+From this, here are the new coverage results:
 
 ![output](vu-docs-res/cmo209_console_output_after2.png)
 
-The branch coverage has improved to 100%. The reason for which this coverage has improved is because I have added a mock loader class in which there is no get_dirs method, so that when the mock loader gets called in the function (as in the override settings it was listed as a test case possibility) this triggered the missing branch. After re-running the coverage, here are the results in the html file: 
+The branch coverage has improved to 100%. The reason for which this coverage has improved is because I have added a mock loader class in which there is no get_dirs method, so that when the mock loader gets called in the function (as in the override settings it was listed as a test case possibility) this triggered the missing branch. After re-running the coverage, here are the results in the html file:
 
 ![outputAfter](vu-docs-res/cmo209_full_coverage_auto.png)
 
@@ -413,7 +413,7 @@ The branch coverage has improved to 100%. The reason for which this coverage has
 ##### 1.C:\Users\aryan\Desktop\sep\django\tests\signed_cookies_tests\tests.py
 
 Previously the the function had a 50% branch coverage and now we have got it to 100% coverage.Once I had identified which branches required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again:
-   
+
 `coverage run ./runtests.py --settings=test_sqlite signed_cookies_tests`
 
 ![Screenshot 2024-06-27 214006](https://github.com/Aryansharma28/django_SEP/assets/89016404/b18fd90d-ce34-4e23-9fe4-e7194753bddf)
@@ -425,7 +425,7 @@ For this function, my aim was to reach 100% coverage. Once I had identified whic
 To acheieve 100% coverage. we first create a Django HttpRequest object to simulate a web request. We then test two scenarios for the get_signed_cookie method: one where we provide a default value for a non-existent cookie, and another where we don't provide a default. For the first scenario, we verify that the method returns the provided default value when the cookie doesn't exist. For the second scenario, we check that the method raises a KeyError when no default is provided and the cookie is missing. These tests ensure that the get_signed_cookie method handles missing cookies correctly, either by returning a default value or raising an exception as appropriate.
 
 [relevant commit](https://github.com/Aryansharma28/django_SEP/commit/67e9e3f7e2c24ab9b9cd9241162dc609f4f4b5a0#diff-f0e5c460b951110bdc3b7967ed2a4c924ae8f093affc27cdd581939d18988725)
- 
+
 ##### 2.\tests\auth_tests\test_tokens.py --> test_check_token_exceptions()
 
 Previously the the function had a 80% branch coverage and now we have got it to 100% coverage.Once I had identified which branches required further testing to achieve this, and implemented it as demonstrated in the link provided above, I ran the command again:
@@ -442,6 +442,12 @@ The branch coverage has improved to 100%. This test function verifies the check_
 
 [Commit to view tests](https://github.com/Aryansharma28/django_SEP/commit/67e9e3f7e2c24ab9b9cd9241162dc609f4f4b5a0#diff-bc4d1f01b0cb354b10be00c5737ffaeca369fc62b0c691f0c01514eac98e8458)
 
+## Overall
+As we already mentioned, Django is a big tool with a very large codebase. Before showing the results after our implementation, it is important to keep in mind that changes may not be immediately visible, as we only covered a grain of salt in the entire codebase. Also, due to the default SQLite configuration of the tests, certain parts of the codebase, especially those that test the different database operations, have a coverage of 0%, as their tests are excluded. The large codebase in combination with excluded tests might drag down by a mile the weight our extended coverage has on the overall coverage of the project.
+The previous coverage results were:
+![Coverage Results](vu-docs-res/coverage-html.png)
+After rerunning coverage with our implemented tests, our assumptions were validated, since the coverage remained at 78%. However, the changes in coverage can be seen in our individual files instead.
+
 ## Statement of individual contributions
 ### Konstantinos Syrros (ksy201)
 - Assisted in assessing the suitability of the project selected for the assignment.
@@ -455,25 +461,16 @@ The branch coverage has improved to 100%. This test function verifies the check_
 - Actively participated in team discussions, asking clarifying questions and helping my team members
 - Enhanced existing test cases by writing code for writable and readable functions
 - Increased the coverage of both functions to 100%
-  
+
 ### Maria Claudia Montalvo (cmo209)
 - Increased the coverage of both functions 100%
 - Instrumented and created further test cases for the `module_dir` function within the module_loading.py file
-- Instrumented and created further test cases for the `get_template_directories` function in the autoreload.py file. 
-- Aided other members of the team with short explanations, for instance regarding the necessary commands 
-- Actively asked questions and did research in order to fully grasp the scope of the task 
+- Instrumented and created further test cases for the `get_template_directories` function in the autoreload.py file.
+- Aided other members of the team with short explanations, for instance regarding the necessary commands
+- Actively asked questions and did research in order to fully grasp the scope of the task
 
 ### Aryan Sharma (ash288)
 - Increased the coverage of both functions 100% by enhancing the test cases to ensure higher branch coverage
 - actively participated in group discussions and attempted to add as much value to the team as possible.
 - Researched and learnt a lot and shared a lot of knowledge regarding this assignment!
 - Aided in completeing the report
-
-
-
-
-
-
-
-
-
